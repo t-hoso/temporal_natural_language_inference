@@ -1,0 +1,7 @@
+numpy==1.20.3
+scikit-learn==0.24.2
+pytorch==1.9.0
+torchtext==0.10.0
+transformers==4.8.1
+sentence-transformers==2.0.0
+click==8.0.1

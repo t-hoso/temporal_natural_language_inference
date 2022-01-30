@@ -1,0 +1,27 @@
+import csv
+from pathlib import Path
+from typing import Any
+
+import numpy as np
+
+from .preprocessor import Preprocessor
+
+
+class SentenceTransformerPreprocessor(Preprocessor):
+    @classmethod
+    def write(
+        cls,
+        data: tuple,
+        output_dir_name: Path, 
+        model_name: str,
+        count: int):
+        _, sentence1s, sentence2s = data
+
+    @classmethod
+    def encode(
+        cls,
+        data: tuple, 
+        encoder: Any, 
+        max_len: int
+    ):
+        _, sentence1_list, sentence2_list = data
