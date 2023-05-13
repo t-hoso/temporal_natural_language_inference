@@ -4,7 +4,8 @@ from sklearn.metrics import accuracy_score
 from .trainer import Trainer
 
 class SiameseKnowledgeTrainer(Trainer):
-    def compute_loss_and_acc(self, model, batch):
+    def compute_loss_and_acc(
+        self, model, batch):
         ids1, ids2, labels, str1, str2  = batch
         ids1 = ids1.to(self.device)
         labels = labels.view(-1)
@@ -20,7 +21,7 @@ class SiameseKnowledgeTrainer(Trainer):
         return loss, acc
 
     def test_step(self, model, batch):
-        labels, ids1, ids2, str1, str2  = batch
+        ids1, ids2, labels, str1, str2  = batch
         ids1 = ids1.to(self.device)
         labels = labels.view(-1)
         labels = labels.to(self.device)
