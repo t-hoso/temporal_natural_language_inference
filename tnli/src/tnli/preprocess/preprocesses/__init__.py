@@ -6,6 +6,7 @@ from .bert_preprocessor import BertPreprocessor
 from .glove_preprocessor import GlovePreprocessor
 from .glove_nli_preprocessor import GloveNliPreprocessor
 from .explain_nli_preprocessor import ExplainNliPreprocessor
+from .bart_preprocessor import BartPreprocessor
 
 __all__ = [
     "ExplainPreprocessor",
@@ -14,5 +15,6 @@ __all__ = [
     "BertPreprocessor",
     "GlovePreprocessor",
     "GloveNliPreprocessor",
-    "ExplainNliPreprocessor"
+    "ExplainNliPreprocessor",
+    "BartPreprocessor",
 ]
