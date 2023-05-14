@@ -34,3 +34,5 @@ class DatasetTypeManager:
             return DatasetType.EXPLAIN_BERT
         elif dataset_type == "knowledge_explain_bert":
             return DatasetType.KNOWLEDGE_EXPLAIN_BERT
+        elif dataset_type == "bart_mnli":
+            return DatasetType.BART_MNLI

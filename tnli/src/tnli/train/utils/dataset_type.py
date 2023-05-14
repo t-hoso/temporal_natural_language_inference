@@ -15,5 +15,6 @@ class DatasetType(Enum):
     GLOVE_KNOWLEDGE = 12
     EXPLAIN_BERT = 13
     KNOWLEDGE_EXPLAIN_BERT = 14
+    BART_MNLI = 15
 
     SBERT_RANDOM = 9
