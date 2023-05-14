@@ -51,7 +51,7 @@ class BartPreprocessor(Preprocessor):
         _, sentence1_list, sentence2_list = data
         encoded_inputs = []
         for sentence1, sentence2 in zip(sentence1_list, sentence2_list):
-            formatted_pair = f"<s> {sentence1} </s></s> {sentence2} </s>"
+            formatted_pair = f"{sentence1} </s><s> {sentence2}"
             encoded_inputs.append(
                 encoder.encode_plus(
                     formatted_pair, 
