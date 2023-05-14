@@ -5,13 +5,14 @@ from transformers import AdamW, get_linear_schedule_with_warmup
 
 from .trainer import Trainer
 from .ffn_trainer import FFNTrainer
-from .bert_trainer import BertTrainer
+from .bart_trainer import BartTrainer
 from .explain_trainer import ExplainTrainer
 from .explain_mnli_trainer import ExplainMNLITrainer
 from .siamese_trainer import SiameseTrainer
 from .knowledge_only_trainer import KnowledgeOnlyTrainer
 from .explain_knowledge_trainer import ExplainKnowledgeTrainer
 from .siamese_knowledge_trainer import SiameseKnowledgeTrainer
+from .bert_trainer import BertTrainer
 from ..settings import Setting
 from ..utils import DatasetFactory, DatasetType, Mode
 from ..loss import SelfExplainLoss
@@ -111,6 +112,18 @@ class TrainerFactory(object):
             )
         elif model_name == setting.MODEL_NAME_BERT:
             return BertTrainer(
+                 model_name,
+                 epochs,
+                 tensorboard_path,
+                 loss_fn, 
+                 optimizer,
+                 scheduler
+            )
+
+        elif model_name in (
+            setting.MODEL_NAME_BART_MNLI # temporarily. should be implemented independently or rename the trainer
+        ):
+            return BartTrainer(
                  model_name,
                  epochs,
                  tensorboard_path,
