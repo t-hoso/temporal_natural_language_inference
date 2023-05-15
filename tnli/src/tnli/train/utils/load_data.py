@@ -513,6 +513,57 @@ def load_bert_split_data(fold: int, val: bool, model_name: str = 'bert-base-unca
         return (train_input_ids, train_masks, train_labels), (test_input_ids, test_masks, test_labels)
 
 
+def load_bart_split_data(fold: int, val: bool, model_name: str = 'facebook/bart-large-mnli'):
+    """
+    load vectorized data that are pre-saved.
+    labels are {0, 1, 2},
+    data are processed by barttokenizer
+
+    Parameters
+    ----------
+    fold: int
+        the ordinal number of fold, {1, 2, 3, 4, 5}
+    val: bool
+        if validation is necessary
+    model_name: str
+        the name of model that is corresponding to barttokenizer
+    
+    Returns
+    Tuple
+    """
+    folds = 5
+    path = get_vectorized_data_path(model_name)
+    label_list = []
+    for i in range(1, folds+1):
+        filepath = get_vectorized_data_path('paraphrase-distilroberta-base-v1') / ('label_' + str(i) + '.csv')
+        label_list.append(np.loadtxt(filepath))
+
+    input_ids = []
+    for i in range(1, folds+1):
+        filepath = path / ('input_ids_' + str(i) + '.csv')
+        input_ids.append(np.loadtxt(filepath, delimiter=','))
+    masks = []
+    for i in range(1, folds+1):
+        filepath = path / ('attention_mask_' + str(i) + '.csv')
+        masks.append(np.loadtxt(filepath, delimiter=','))
+
+    if val:
+        train_labels, val_labels, test_labels = train_test_fold_split(label_list, fold - 1, val)
+        train_input_ids, val_input_ids, test_input_ids = train_test_fold_split(input_ids, fold - 1, val)
+        train_masks, val_masks, test_masks = train_test_fold_split(masks, fold - 1, val)
+        val_sentence = np.concatenate([val_input_ids, val_masks], 1)
+        test_sentence = np.concatenate([test_input_ids, test_masks], 1)
+        return (train_input_ids, train_masks, train_labels), \
+               (val_input_ids, val_masks, val_labels), \
+               (test_input_ids, test_masks, test_labels)
+
+    else:
+        train_labels, test_labels = train_test_fold_split(label_list, fold-1)
+        train_input_ids, test_input_ids = train_test_fold_split(input_ids, fold - 1, val)
+        train_masks, test_masks = train_test_fold_split(masks, fold - 1, val)
+        return (train_input_ids, train_masks, train_labels), (test_input_ids, test_masks, test_labels)
+
+
 def load_bert_split_tensor_dataset(fold: int, val: bool, model_name: str= 'bert-base-uncased'):
     """
     load dataloader that are pre-saved and encoded by bert tokenizer.
@@ -535,6 +586,42 @@ def load_bert_split_tensor_dataset(fold: int, val: bool, model_name: str= 'bert-
         train_data, val_data, test_data = load_bert_split_data(fold, val, model_name)
     else:
         train_data, test_data = load_bert_split_data(fold, val, model_name)
+
+    train_dataset = torch.utils.data.TensorDataset(torch.tensor(train_data[0]).long(),
+                                                   torch.tensor(train_data[1]).long(), torch.tensor(train_data[2]).long())
+    test_dataset = torch.utils.data.TensorDataset(torch.tensor(test_data[0]).long(),
+                                                  torch.tensor(test_data[1]).long(), torch.tensor(test_data[2]).long())
+
+    if val:
+        val_dataset = torch.utils.data.TensorDataset(torch.tensor(val_data[0]).long(),
+                                                     torch.tensor(val_data[1]).long(), torch.tensor(val_data[2]).long())
+        return train_dataset, val_dataset, test_dataset
+    else:
+        return train_dataset, test_dataset
+
+
+def load_bart_split_tensor_dataset(fold: int, val: bool, model_name: str= 'facebook/bart-large-mnli'):
+    """
+    load dataloader that are pre-saved and encoded by bart tokenizer.
+    labels are {0, 1, 2},
+    data are processed by barttokenizer
+    
+    Parameters
+    ----------
+    fold: int
+        the number of fold to be treated as test set
+    val: bool
+        if it is
+    model_name: str
+    
+    Returns
+    -------
+    Tuple[torch.utils.data.TensorDataset]
+    """
+    if val:
+        train_data, val_data, test_data = load_bart_split_data(fold, val, model_name)
+    else:
+        train_data, test_data = load_bart_split_data(fold, val, model_name)
 
     train_dataset = torch.utils.data.TensorDataset(torch.tensor(train_data[0]).long(),
                                                    torch.tensor(train_data[1]).long(), torch.tensor(train_data[2]).long())

@@ -16,7 +16,8 @@ from .load_data import(
     load_bert_split_tensor_dataset, 
     load_explain_split_tensor_dataset,
     load_explain_snli_tensor_dataset, 
-    load_raw_sentence_dataset
+    load_raw_sentence_dataset,
+    load_bart_split_tensor_dataset
 )
 from .explain_knowledge_dataset import ExplainKnowledgeDataset
 from .glove_knowledge_dataset import GloveKnowledgeDataset
@@ -130,6 +131,9 @@ class DatasetFactory():
         elif kind == DatasetType.KNOWLEDGE_EXPLAIN_BERT:
             train_dataset, val_dataset, test_dataset = \
                 cls.load_knowledge_dataset(fold, True, Path(DATA_DIR)/BERT)
+        elif kind == DatasetType.BART_MNLI:
+            _, _, train_dataset, _, _, val_dataset,\
+            _, _, test_dataset = cls.load_tnli_bart_mnli_dataset_folds(fold)
 
         if mode == Mode.TRAIN:
             return train_dataset
@@ -208,6 +212,26 @@ class DatasetFactory():
         Tuple
         """
         train_dataset, val_dataset, test_dataset = load_bert_split_tensor_dataset(fold, val=True)
+        sentence1_list, sentence2_list = load_fold_sentences()
+        train_sentence1, val_sentence1, test_sentence1 = train_test_fold_split(sentence1_list, fold-1, True)
+        train_sentence2, val_sentence2, test_sentence2 = train_test_fold_split(sentence2_list, fold-1, True)
+        return train_sentence1, train_sentence2, train_dataset, val_sentence1, val_sentence2, val_dataset,\
+            np.array(test_sentence1), np.array(test_sentence2), test_dataset
+
+    @staticmethod
+    def load_tnli_bart_mnli_dataset_folds(fold):
+        """
+        load raw sentence and corresponding dataset
+        this datasets are for 5-fold cv for bart-large-mnli model
+        Parameters
+        ----------
+        fold: int
+        
+        Returns
+        -------
+        Tuple
+        """
+        train_dataset, val_dataset, test_dataset = load_bart_split_tensor_dataset(fold, val=True)
         sentence1_list, sentence2_list = load_fold_sentences()
         train_sentence1, val_sentence1, test_sentence1 = train_test_fold_split(sentence1_list, fold-1, True)
         train_sentence2, val_sentence2, test_sentence2 = train_test_fold_split(sentence2_list, fold-1, True)

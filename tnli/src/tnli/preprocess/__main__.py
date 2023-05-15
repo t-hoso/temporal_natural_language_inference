@@ -4,7 +4,7 @@ from pathlib import Path
 import numpy as np
 import torch
 import click
-from transformers import BertTokenizer, RobertaTokenizer
+from transformers import BertTokenizer, RobertaTokenizer, BartTokenizer
 import torchtext as text
 
 from .preprocesses import (
@@ -13,7 +13,8 @@ from .preprocesses import (
     BertPreprocessor,
     GlovePreprocessor,
     GloveNliPreprocessor,
-    ExplainNliPreprocessor
+    ExplainNliPreprocessor,
+    BartPreprocessor,
 )
 from .preprocesses.encoders \
     import SentenceTransformersEncoder
@@ -47,6 +48,7 @@ MODEL_NAME_GLOVE_SNLI = "glove_snli"
 MODEL_NAME_GLOVE_MNLI = "glove_mnli"
 MODEL_NAME_EXPLAIN_SNLI = "explain_snli"
 MODEL_NAME_EXPLAIN_MNLI = "explain_mnli"
+MODEL_NAME_BART_MNLI = "facebook/bart-large-mnli"
 
 MAX_LEN = 32
 
@@ -196,6 +198,15 @@ def run(kind):
             input_dir_name=Path(DATA_DIR) / "folds",
             output_dir_name=Path(DATA_DIR) / MODEL_NAME_EXPLAIN_BERT,
             model_name=MODEL_NAME_BERT,
+            max_len=MAX_LEN,
+            data_loader=DataLoader
+        )
+    elif kind == MODEL_NAME_BART_MNLI:
+        BartPreprocessor.process(
+            BartTokenizer.from_pretrained(MODEL_NAME_BART_MNLI),
+            input_dir_name=Path(DATA_DIR) / "folds",
+            output_dir_name=Path(DATA_DIR) / MODEL_NAME_BART_MNLI,
+            model_name=MODEL_NAME_BART_MNLI,
             max_len=MAX_LEN,
             data_loader=DataLoader
         )

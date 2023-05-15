@@ -17,6 +17,7 @@ class Setting(object):
         self.MODEL_NAME_TRANSE_EXPLAIN = "transe_explain"
         self.MODEL_NAME_EXPLAIN_BERT = "explain_bert"
         self.MODEL_NAME_KNOWLEDGE_EXPLAIN_BERT = "knowledge_explain_bert"
+        self.MODEL_NAME_BART_MNLI = "bart_mnli"
 
         self.LOSS_FN_CROSS_ENTROPY_LOSS = "cross_entropy_loss"
         self.LOSS_FN_SELF_EXPLAIN_LOSS = "self_explain_loss"

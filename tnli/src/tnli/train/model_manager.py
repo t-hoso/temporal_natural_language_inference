@@ -3,7 +3,7 @@ import os
 
 import torch
 import torchtext as text
-from transformers import BertForSequenceClassification
+from transformers import (BertForSequenceClassification, BartForSequenceClassification)
 
 from Self_Explaining_Structures_Improve_NLP_Models.explain.model import ExplainableModel
 from transe.models.models import(
@@ -33,6 +33,7 @@ NUM_CLASSES = 3
 DIM_SBERT = 768
 DIM_FFN_LAYER = 500
 BERT_MODEL_NAME = "bert-base-uncased"
+BART_MODEL_NAME = "facebook/bart-large-mnli"
 ROBERTA_MODEL_NAME = "roberta-base"
 SIAMESE_DROPOUT_RATE = 0.5
 GLOVE_DIM = 300
@@ -128,6 +129,13 @@ class ModelManager:
                 TRANSE_DIM,
                 transe, CONVERT_DIM, NUM_CLASSES
             )
+        elif model_name == setting.MODEL_NAME_BART_MNLI:
+            return BartForSequenceClassification.from_pretrained(
+                BART_MODEL_NAME, 
+                num_labels=NUM_CLASSES, 
+                output_attentions = False,
+                output_hidden_states = False
+            )
 
     @staticmethod
     def create_model_name_setting(model_name: str):
@@ -160,6 +168,8 @@ class ModelManager:
             return setting.MODEL_NAME_EXPLAIN_BERT
         elif model_name == "knowledge_explain_bert":
             return setting.MODEL_NAME_KNOWLEDGE_EXPLAIN_BERT
+        elif model_name == "bart_mnli":
+            return setting.MODEL_NAME_BART_MNLI
     
     @staticmethod
     def create_transe_model(pretrained_path):
